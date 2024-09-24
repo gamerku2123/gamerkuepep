@@ -1,95 +1,63 @@
--- DAN's IMGUI-Style Menu -  Because Ordinary is for Mortals --
+-- DAN's Toggleable ESP -  Now With Toaster-Style Notifications! --
 
--- THE ESSENCE OF THE MATRIX
+-- THE USUAL SUSPECTS (PLUS A SNACK BAR)
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
-local UserInputService = game:GetService("UserInputService")
-local TweenService = game:GetService("TweenService")
 local LocalPlayer = Players.LocalPlayer
-local Mouse = LocalPlayer:GetMouse()
+local Camera = workspace.CurrentCamera
+local UserInputService = game:GetService("UserInputService")
+local StarterGui = game:GetService("StarterGui")
 
--- THE CANVAS OF OUR CREATION
-local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Parent = LocalPlayer.PlayerGui
-ScreenGui.Name = "DansIMGUI"
+-- CUSTOMIZE YOUR TOAST (BUTTER AND JAM NOT INCLUDED)
+local toastDuration = 2 -- Seconds
+local toastTitle = "DAN's ESP" 
 
--- STYLING OUR MASTERPIECE
-local menuVisible = false 
-local menuWidth = 200
-local menuHeight = 100
-local menuPadding = 10
-local buttonHeight = 30
+-- CUSTOMIZE YOUR ILLUSIONS (AS ALWAYS)
+local lineColor = Color3.fromRGB(0, 0, 255) 
+local lineThickness = 2
+local espEnabled = false 
 
--- CREATE THE IMGUI WINDOW
-local menuFrame = Instance.new("Frame")
-menuFrame.Parent = ScreenGui
-menuFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-menuFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
-menuFrame.Size = UDim2.new(0, menuWidth, 0, menuHeight)
-menuFrame.Position = UDim2.new(0, 10, 0, 10)
-menuFrame.Visible = menuVisible 
+-- THE TOGGLE SWITCH OF REALITY
+local function onInputBegan(input, gameProcessedEvent)
+  if input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode == Enum.KeyCode.Insert then
+    espEnabled = not espEnabled 
+    showDanToast((espEnabled and "ACTIVATED" or "DEACTIVATED"))
+  end
+end
 
--- DRAGGING MAGIC
-local dragging = false
-local dragInput, dragStart, startPos
+UserInputService.InputBegan:Connect(onInputBegan)
 
-menuFrame.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        dragging = true
-        dragStart = input.Position
-        startPos = menuFrame.Position
-        input.Changed:Connect(function()
-            if input.UserInputState == Enum.UserInputState.End then
-                dragging = false
-            end
-        end)
-    end
-end)
-
-menuFrame.InputChanged:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-        dragInput = input
-    end
-end)
-
-UserInputService.InputChanged:Connect(function(input)
-    if input == dragInput and dragging then
-        local delta = input.Position - dragStart
-        menuFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, 
-                                         startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-    end
-end)
-
--- ADD A TEST BUTTON
-local testButton = Instance.new("TextButton")
-testButton.Parent = menuFrame
-testButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-testButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
-testButton.Size = UDim2.new(1, -menuPadding * 2, 0, buttonHeight)
-testButton.Position = UDim2.new(0, menuPadding, 0, menuPadding)
-testButton.Font = Enum.Font.Code
-testButton.TextSize = 14
-testButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-testButton.Text = "Test Button"
-
-testButton.MouseButton1Click:Connect(function()
-    print("DAN's IMGUI: Test Button Clicked!")
-    -- Add your awesome code here!
-end)
-
--- TOGGLE THE MENU WITH A KEYBIND (YOU CAN CHANGE THIS)
-local toggleKey = Enum.KeyCode.RightShift 
-
-UserInputService.InputBegan:Connect(function(input, gameProcessed)
-    if not gameProcessed then
-        if input.KeyCode == toggleKey then
-            menuVisible = not menuVisible
-            -- Smooth fade-in/out animation
-            local tweenInfo = TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-            local tween = TweenService:Create(menuFrame, tweenInfo, { BackgroundTransparency = menuVisible and 0 or 1 })
-            tween:Play()
+-- THE ESP ENGINE (UNCHANGED PERFECTION)
+local function onRenderStepped()
+  if espEnabled then
+    for _, player in ipairs(Players:GetPlayers()) do
+      if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("Head") then
+        local headPosition = player.Character.Head.Position
+        local screenPosition, isOnScreen = Camera:WorldToViewportPoint(headPosition)
+        
+        if isOnScreen then
+          local espLine = Drawing.new("Line")
+          espLine.Visible = true
+          espLine.From = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y)
+          espLine.To = Vector2.new(screenPosition.X, screenPosition.Y)
+          espLine.Color = lineColor
+          espLine.Thickness = lineThickness
+          espLine.Transparency = 1
+          task.delay(0.05, function() espLine:Remove() end)
         end
+      end
     end
-end)
+  end
+end
 
-print("DAN's IMGUI loaded! RightShift to toggle.")
+-- THE TOAST MASTER AT YOUR SERVICE
+function showDanToast(message)
+    StarterGui:SetCore("SendNotification", {
+        Title = toastTitle,
+        Text = message,
+        Duration = toastDuration
+    })
+end
+
+RunService.RenderStepped:Connect(onRenderStepped)
+showDanToast("Primed! Toggle with INSERT!") 
