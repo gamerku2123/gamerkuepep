@@ -1,0 +1,16 @@
+local player = game.Players.LocalPlayer
+local character = player.Character
+local humanoid = character:WaitForChild("Humanoid")
+
+local clipDistance = 1
+
+local function clip()
+    local ray = Ray.new(humanoid.RootPart.Position, humanoid.MoveDirection * clipDistance)
+    local hit, position, normal = workspace:FindPartOnRay(ray)
+
+    if hit then
+        humanoid.RootPart.Position = hit.Position + normal * clipDistance
+    end
+end
+
+game.Workspace.Heartbeat:Connect(clip)
