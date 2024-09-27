@@ -89,30 +89,6 @@ end
 --// WHAT'S NEW TOAST
 ShowToast("Hitbox Expander 2.0", "Loaded! - Noclip fixed, IY Added") 
 
---// NOCLIP FIX  
-PlayerTab:Keybind("Noclip", Enum.KeyCode.N, function()
-    Noclip = not Noclip 
-    local function NoclipLoop()
-        if Noclip and LocalPlayer.Character then
-            for _, Part in pairs(LocalPlayer.Character:GetDescendants()) do
-                if Part:IsA("BasePart") then
-                    Part.CanCollide = false
-                end
-            end
-        end
-    end
-
-    if not Noclip and LocalPlayer.Character then
-        for _, Part in pairs(LocalPlayer.Character:GetDescendants()) do
-            if Part:IsA("BasePart") then
-                Part.CanCollide = true 
-            end
-        end
-    end
-
-    RunService.Stepped:Connect(NoclipLoop)
-end)
-
 --// INFINITE YIELD
 SettingsTab:Button("Infinite Yield", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
