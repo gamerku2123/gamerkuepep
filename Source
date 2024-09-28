@@ -22,30 +22,6 @@ local function isNumber(str)
   end
 end
 
-local ESP_SETTINGS = {
-        BoxOutlineColor = Color3.new(0, 0, 0),
-        BoxColor = Color3.new(1, 1, 1),
-        NameColor = Color3.new(1, 1, 1),
-        HealthOutlineColor = Color3.new(0, 0, 0),
-        HealthHighColor = Color3.new(0, 1, 0),
-        HealthLowColor = Color3.new(1, 0, 0),
-        CharSize = Vector2.new(4, 6),
-        Teamcheck = false,
-        WallCheck = false,
-        Enabled = false,
-        ShowBox = false,
-        BoxType = "2D",
-        ShowName = false,
-        ShowHealth = false,
-        ShowDistance = false,
-        ShowSkeletons = false,
-        ShowTracer = false,
-        TracerColor = Color3.new(1, 1, 1), 
-        TracerThickness = 2,
-        SkeletonsColor = Color3.new(1, 1, 1),
-        TracerPosition = "Top",
-    }
-
 -- Function to display a toast notification
 Fluent:Notify({
     Title = "Hitbox Expander 2.0",
@@ -167,14 +143,16 @@ HomeTab:Toggle("Enable: ", function(state)
 		end
 	end)
 end)
+HomeTab:Button("Enable Hitbox (for arsenal)", function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Rollimonster/Arsenal-Hitbox-Expander/main/Arsenal-Hitbox-Expander"))()
+end)
+HomeTab:TextBox("Hitbox Size", function(value)
+    getgenv().HitboxSize = value
+end)
 
 HomeTab:Toggle("Team Check", function(state)
     getgenv().TeamCheck = state
-end)
-
-
-HomeTab:TextBox("Hitbox Size", function(value)
-    getgenv().HitboxSize = value
+    ESP_SETTINGS.Teamcheck = true
 end)
 
 HomeTab:TextBox("Hitbox Transparency", function(number)
