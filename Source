@@ -4,11 +4,15 @@ Open source
 Original Made by !vcsk0#1516
 Credits to he
 Credit to Gamerku to updating the script
-
 Credits to the Owner Who Made The ESP Script
+Credits to master who own the esp script
 
 ]]
 
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
+local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
+local ESP = loadstring(game:HttpGet("https://raw.githubusercontent.com/linemaster2/esp-library/main/library.lua"))();
 local CoreGui = game:GetService("StarterGui")
 local Players = game:GetService("Players")
 
@@ -18,16 +22,36 @@ local function isNumber(str)
   end
 end
 
--- Function to display a toast notification
-local function ShowToast(message)
-    game:GetService("StarterGui"):SetCore("SendNotification", {
-        Title = "Hitbox Expander 2.0", 
-        Text = message,
-        Duration = 5, -- Adjust duration as needed
-    })
-end
+local ESP_SETTINGS = {
+        BoxOutlineColor = Color3.new(0, 0, 0),
+        BoxColor = Color3.new(1, 1, 1),
+        NameColor = Color3.new(1, 1, 1),
+        HealthOutlineColor = Color3.new(0, 0, 0),
+        HealthHighColor = Color3.new(0, 1, 0),
+        HealthLowColor = Color3.new(1, 0, 0),
+        CharSize = Vector2.new(4, 6),
+        Teamcheck = false,
+        WallCheck = false,
+        Enabled = false,
+        ShowBox = false,
+        BoxType = "2D",
+        ShowName = false,
+        ShowHealth = false,
+        ShowDistance = false,
+        ShowSkeletons = false,
+        ShowTracer = false,
+        TracerColor = Color3.new(1, 1, 1), 
+        TracerThickness = 2,
+        SkeletonsColor = Color3.new(1, 1, 1),
+        TracerPosition = "Top",
+    }
 
-ShowToast("Injected!! Enjoy Cheating LOL") 
+-- Function to display a toast notification
+Fluent:Notify({
+    Title = "Hitbox Expander 2.0",
+    Content = "Injected!! Enjoy Cheating LOL",
+    Duration = 8
+})
 
 getgenv().HitboxSize = 15
 getgenv().HitboxTransparency = 0.9
@@ -87,7 +111,11 @@ local function ShowToast(title, message)
 end
 
 --// WHAT'S NEW TOAST
-ShowToast("Hitbox Expander 2.0", "Loaded! - Noclip fixed, IY Added") 
+Fluent:Notify({
+    Title = "Hitbox Expander 2.0",
+    Content = "Loaded! - Noclip fixed, IY Added",
+    Duration = 8
+})
 
 --// INFINITE YIELD
 SettingsTab:Button("Infinite Yield", function()
@@ -97,7 +125,7 @@ end)
 
 HomeTab:Section("Main Menu")
 
-HomeTab:Toggle("Status: ", function(state)
+HomeTab:Toggle("Enable: ", function(state)
 	getgenv().HitboxStatus = state
     game:GetService('RunService').RenderStepped:connect(function()
 		if HitboxStatus == true and TeamCheck == false then
@@ -210,6 +238,25 @@ PlayerTab:Keybind("Noclip", Enum.KeyCode.N, function()
     end
 end) 
 
+PlayerTab:Toggle("Noclip Mobile", function(state)
+    local Noclip = not Noclip
+    local Player = game:GetService("Players").LocalPlayer 
+    
+    if Noclip then 
+        for _,v in pairs(Player.Character:GetDescendants()) do
+	        if v:IsA("BasePart") then
+		        v.CanCollide = false
+	        end
+        end
+    else
+        for _,v in pairs(Player.Character:GetDescendants()) do
+	        if v:IsA("BasePart") then
+		        v.CanCollide = true
+	        end
+        end
+    end
+end) 
+
 PlayerTab:TextBox("TP Speed", function(value)
 getgenv().TPSpeed = value
 end)
@@ -249,6 +296,10 @@ VisualTab:Section("Visuals")
 
 VisualTab:InfoLabel("Wait 3-10 seconds")
 
+VisualTab:Toggle("Enable Esp", function(state)
+ESP.Enabled = state;
+end)
+
 VisualTab:Toggle("Character Highlight", function(state)
 getgenv().enabled = state --Toggle on/off
 getgenv().filluseteamcolor = true --Toggle fill color using player team color on/off
@@ -273,6 +324,29 @@ if game.PlaceId == 3082002798 then
 		end
 	end)
 end
+
+
+
+VisualTab:Toggle("Hitbox", function(state)
+ESP.ShowBox = state;
+end)
+
+VisualTab:Toggle("Names", function(state)
+ESP.ShowName = state;
+end)
+
+
+VisualTab:Toggle("Healthbar", function(state)
+ESP.ShowHealth = state;
+end)
+
+VisualTab:Toggle("Tracers", function(state)
+ESP.ShowTracer = state;
+end)
+
+VisualTab:Toggle("Distance", function(state)
+ESP.ShowDistance = state
+end)
 
 PlayerTab:Section("Players Menu")
 
