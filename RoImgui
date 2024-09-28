@@ -389,8 +389,8 @@ local function updateEsp()
     end
 end
 
-for _, player in pairs(Players:GetPlayers()) do
-    if player ~= LocalPlayer and (not ESP_SETTINGS.Teamcheck or player.Team ~= LocalPlayer.Team) then
+for _, player in ipairs(Players:GetPlayers()) do
+    if player ~= localPlayer then
         createEsp(player)
     end
 end
